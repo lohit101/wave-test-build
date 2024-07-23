@@ -29,7 +29,7 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import SignupForm, LoginForm
 from .models import AllUploads
 
-engine = pyttsx3.init()
+# engine = pyttsx3.init()
 aai.settings.api_key = "1e5580a285b54d92ba4127864d759415"
 BASE_DIR = Path(os.path.dirname(__file__)).parent.absolute()
 
