@@ -1,34 +1,42 @@
-import praw
+import requests
+from pydub import AudioSegment
 
-reddit = praw.Reddit(
-    client_id="knbUbBEc4z1gwkCsTgSqtA",
-    client_secret="l82ipqXjyzttMwa5DwBs0EvfdkOwaA",
-    user_agent="Window11:YTFaceless:v0.1 by u/Msfvenomm",
-)
+url = "https://api.v7.unrealspeech.com/speech"
 
+payload = {
+    "Text": "This is a test voice message just to see if this block is working",
+    "VoiceId": "Scarlett",
+    "Bitrate": "192k",
+    "Speed": "0",
+    "Pitch": "1",
+    "TimestampType": "sentence"
+}
+headers = {
+    "accept": "application/json",
+    "content-type": "application/json",
+    "Authorization": "Bearer 7Qtps05ptTV1sGGvuqyMMDDRJ76gcFFQFJI4Ycw6wj4L0ehGI3Q3tL"
+}
 
-def getstory(subreddit):
-    textlistfinal = []
-    textlist = []
-    n = 0
-    for submission in reddit.subreddit(subreddit).hot(limit = 3):
-        textlist.append(submission.title)
-        for top_level_comment in submission.comments:
-            try:
-                textlist.append(top_level_comment.body)
-                n += 1
-                if n >= 5:
-                    break
-            except AttributeError:
-                break
-        textlistfinal.append(textlist)
-        textlist = []
-        n = 0
-        
-    response = {
-        'response' : textlistfinal
-    }
+response = requests.post(url, json=payload, headers=headers)
+
+if response.status_code == 200:
+    response_json = response.json()
+    output_uri = response_json.get("OutputUri")
     
-    return JsonResponse(response)
-    
-getstory("askreddit")
+    if output_uri:
+        # Download the audio file from the output URI
+        audio_response = requests.get(output_uri)
+        if audio_response.status_code == 200:
+            with open("output.mp3", "wb") as audio_file:
+                audio_file.write(audio_response.content)
+            print("Audio content written to file 'output.mp3'")
+        else:
+            print(f"Failed to download audio file: {audio_response.status_code}")
+    else:
+        print("Output URI not found in the response")
+else:
+    print(f"Request failed: {response.status_code}")
+    print(response.text)
+
+sound = AudioSegment.from_mp3("output.mp3")
+sound.export("output.wav", format="wav")

@@ -518,18 +518,12 @@
             .then(data => {
                 console.log(data);
 
-                fetch('/testurl/')
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                    })
-
                 modalCloseBtn.classList.remove('hidden');
                 if (isMobileDevice()) {
-                    finalVideo.src = data['response'];
+                    finalVideo.setAttribute('href', data['response']);
                     downloadBtn.setAttribute('href', data['response']);
                 } else {
-                    finalVideo.src = data['response'].replace('.mp4', '.mov');
+                    finalVideo.setAttribute('href', data['response'].replace('.mp4', '.mov'));
                     downloadBtn.setAttribute('href', data['response'].replace('.mp4', '.mov'));
                 }
                 downloadBtn.classList.remove('hidden');
@@ -715,10 +709,10 @@
                 console.log(data);
                 modalCloseBtn.classList.remove('hidden');
                 if (isMobileDevice()) {
-                    finalVideo.src = data['response'];
+                    finalVideo.setAttribute('href', data['response']);
                     downloadBtn.setAttribute('href', data['response']);
                 } else {
-                    finalVideo.src = data['response'].replace('.mp4', '.mov');
+                    finalVideo.setAttribute('href', data['response'].replace('.mp4', '.mov'));
                     downloadBtn.setAttribute('href', data['response'].replace('.mp4', '.mov'));
                 }
                 downloadBtn.classList.remove('hidden');

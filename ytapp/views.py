@@ -1,7 +1,9 @@
 import praw
-import pyttsx3
+# import pyttsx3
 import os
 import wave
+from pydub import AudioSegment
+# from unrealspeech import UnrealSpeechAPI, save
 import moviepy.editor as mpy
 from moviepy.editor import *
 import random
@@ -9,6 +11,7 @@ import ffmpeg
 import assemblyai as aai
 from PIL import Image, ImageFont
 from pathlib import Path
+import requests
 import json
 import time
 import threading
@@ -31,6 +34,10 @@ aai.settings.api_key = "1e5580a285b54d92ba4127864d759415"
 BASE_DIR = Path(os.path.dirname(__file__)).parent.absolute()
 
 FFMPEG_PATH = os.path.join(BASE_DIR, "./static/bin/ffmpeg.exe")
+
+# speech_api = UnrealSpeechAPI(
+#     api_key='7Qtps05ptTV1sGGvuqyMMDDRJ76gcFFQFJI4Ycw6wj4L0ehGI3Q3tL'
+# )
 
 reddit = praw.Reddit(
     client_id="knbUbBEc4z1gwkCsTgSqtA",
@@ -210,11 +217,52 @@ def audio(request, text):
     print("Creating audio file...")
     
     REDDIT_VIDEO_USER_ROUTE = os.path.join(BASE_DIR, 'static', 'user', str(request.user), 'RedditVideo')
+    output_audio_path = os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Voiceovers')
     
-    output_audio_path = os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Voiceovers', 'title.wav')
+    url = "https://api.v7.unrealspeech.com/speech"
+
+    payload = {
+        "Text": text,
+        "VoiceId": "Will",
+        "Bitrate": "192k",
+        "Speed": "0.30",
+        "Pitch": "1",
+        "TimestampType": "sentence"
+    }
+    headers = {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "Authorization": "Bearer 7Qtps05ptTV1sGGvuqyMMDDRJ76gcFFQFJI4Ycw6wj4L0ehGI3Q3tL"
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+
+    if response.status_code == 200:
+        response_json = response.json()
+        output_uri = response_json.get("OutputUri")
+        
+        if output_uri:
+            # Download the audio file from the output URI
+            audio_response = requests.get(output_uri)
+            if audio_response.status_code == 200:
+                with open(os.path.join(output_audio_path, 'title.mp3'), "wb") as audio_file:
+                    audio_file.write(audio_response.content)
+                print("Audio content written to file 'output.mp3'")
+            else:
+                print(f"Failed to download audio file: {audio_response.status_code}")
+        else:
+            print("Output URI not found in the response")
+    else:
+        print(f"Request failed: {response.status_code}")
+        print(response.text)
+
+    sound = AudioSegment.from_mp3(os.path.join(output_audio_path, 'title.mp3'))
+    sound.export(os.path.join(output_audio_path, 'title.wav'), format="wav")
     
-    engine.save_to_file(text, output_audio_path)
-    engine.runAndWait()
+    # engine.save_to_file(text, output_audio_path)
+    # engine.runAndWait()
+    
+    # 'Authorization' : 'Bearer 7Qtps05ptTV1sGGvuqyMMDDRJ76gcFFQFJI4Ycw6wj4L0ehGI3Q3tL'
     
     res = get_duration(request)
     return res
@@ -222,17 +270,12 @@ def audio(request, text):
 def get_duration(request):
     REDDIT_VIDEO_USER_ROUTE = os.path.join(BASE_DIR, 'static', 'user', str(request.user), 'RedditVideo')
     
-    durations = []
-    
-    for file_path in os.listdir(os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Voiceovers')):
-        with wave.open(os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Voiceovers', file_path), 'r') as audio_file:
-            frame_rate = audio_file.getframerate()
-            n_frames = audio_file.getnframes()
-            duration = n_frames / float(frame_rate)
+    with wave.open(os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Voiceovers', 'title.wav'), 'r') as audio_file:
+        frame_rate = audio_file.getframerate()
+        n_frames = audio_file.getnframes()
+        duration = (n_frames / float(frame_rate)) + 1
             
-            durations.append(duration + 1)
-            
-    res = create_video(request, sum(durations))
+    res = create_video(request, duration)
     return res
             
 def create_video(request, audio_length):
@@ -349,7 +392,7 @@ def save_project(request, project):
     alluploads.save()
 
     data = {
-        'response' : project
+        'response' : str(project)
     }
     return JsonResponse(data)
 
