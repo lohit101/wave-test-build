@@ -9,7 +9,8 @@ from moviepy.editor import *
 import random
 import ffmpeg
 import assemblyai as aai
-from PIL import Image, ImageFont
+from PIL import Image as pil
+from PIL import ImageFont
 from pathlib import Path
 import requests
 import json
@@ -19,6 +20,7 @@ import shutil
 import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
+from pkg_resources import parse_version
 
 from django.shortcuts import render, redirect, HttpResponse
 from django.templatetags.static import static
@@ -28,6 +30,9 @@ from django.contrib.auth import authenticate, login, logout
 
 from .forms import SignupForm, LoginForm
 from .models import AllUploads
+
+if parse_version(pil.__version__)>=parse_version('10.0.0'):
+    pil.Image.ANTIALIAS = pil.Image.LANCZOS
 
 # engine = pyttsx3.init()
 aai.settings.api_key = "1e5580a285b54d92ba4127864d759415"
@@ -187,7 +192,7 @@ def create_text_image(request, textlist: list):
     font_color = "white"
     # font_file = os.path.join(BASE_DIR, 'static', 'bin', 'fonts', 'Verdana.ttf')
 
-    image = Image.open(input_image_path)
+    image = pil.open(input_image_path)
     image_width, image_height = image.size
     
     font = ImageFont.load_default()
