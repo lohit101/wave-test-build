@@ -190,7 +190,6 @@ def create_text_image(request, textlist: list):
             y=y + i * (font_size + 10),
             fontsize=font_size,
             fontcolor=font_color,
-            fontfile=font_file,
             box=1,
             boxcolor='black@0.5',
             boxborderw=5
