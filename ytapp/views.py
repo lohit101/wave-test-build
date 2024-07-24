@@ -33,7 +33,7 @@ from .models import AllUploads
 aai.settings.api_key = "1e5580a285b54d92ba4127864d759415"
 BASE_DIR = Path(os.path.dirname(__file__)).parent.absolute()
 
-FFMPEG_PATH = os.path.join(BASE_DIR, "./static/bin/ffmpeg.exe")
+# FFMPEG_PATH = os.path.join(BASE_DIR, "./static/bin/ffmpeg.exe")
 
 # speech_api = UnrealSpeechAPI(
 #     api_key='7Qtps05ptTV1sGGvuqyMMDDRJ76gcFFQFJI4Ycw6wj4L0ehGI3Q3tL'
@@ -199,7 +199,8 @@ def create_text_image(request, textlist: list):
     stream = ffmpeg.output(stream, output_image_path)
     
     try:
-        stream.run(overwrite_output=True, cmd=FFMPEG_PATH)
+        # stream.run(overwrite_output=True, cmd=FFMPEG_PATH)
+        stream.run(overwrite_output=True)
         print(f"Text added to image and saved as {output_image_path}")
     except ffmpeg.Error as e:
         print(f"Error occurred: {e.stderr}")
@@ -351,7 +352,8 @@ def add_captions(request):
             acodec='aac', 
             strict='-2'
         )
-        .run(overwrite_output=True, cmd=FFMPEG_PATH)
+        # .run(overwrite_output=True, cmd=FFMPEG_PATH)
+        .run(overwrite_output=True)
     )
     
     res = add_audio(request)
