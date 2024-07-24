@@ -68,8 +68,22 @@ def initiate_dirs(request):
         os.makedirs(os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Images'))
         os.makedirs(os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Voiceovers'))
         os.makedirs(os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Transcriptions'))
+        
         if not os.path.isdir(os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Video')):
             os.makedirs(os.path.join(REDDIT_VIDEO_USER_ROUTE, 'Video'))
+            
+    if not os.path.isdir(os.path.join(BASE_DIR, 'static', 'bin', 'RedditVideo', 'Background')):
+        os.makedirs(os.path.join(BASE_DIR, 'static', 'bin', 'RedditVideo', 'Background'))
+        
+    if not os.path.isdir(os.path.join(BASE_DIR, 'static', 'bin', 'RedditVideo', 'Background', 'Video.mp4')):            
+        url = 'https://res.cloudinary.com/dk3pza4u4/video/upload/v1721839610/Background.mp4'
+        
+        response = requests.get(url)
+        
+        with open(os.path.join(BASE_DIR, 'static', 'bin', 'RedditVideo', 'Background', 'Video.mp4'), 'wb') as background:
+            background.write(response.content)
+            
+            
 
 def manual_getstory(request, subreddit):
     print("Got a  call from: ", str(request.user))
