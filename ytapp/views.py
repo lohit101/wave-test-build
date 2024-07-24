@@ -171,12 +171,12 @@ def create_text_image(request, textlist: list):
     y = 230
     font_size = 80
     font_color = "white"
-    font_file = os.path.join(BASE_DIR, 'static', 'bin', 'fonts', 'Verdana.ttf')
+    # font_file = os.path.join(BASE_DIR, 'static', 'bin', 'fonts', 'Verdana.ttf')
 
     image = Image.open(input_image_path)
     image_width, image_height = image.size
     
-    font = ImageFont.truetype(font_file, font_size) if font_file else ImageFont.load_default()
+    font = ImageFont.load_default()
     
     max_width = image_width - x * 2
     lines = wrap_text(text, font, max_width)
