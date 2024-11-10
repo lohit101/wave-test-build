@@ -1,4 +1,3 @@
-```markdown
 # YTFaceless: A Django-based Reddit Video Facelift Project
 
 YTFaceless is a Django-based web application that takes user-submitted Reddit posts and generates a personalized video clip with a voiceover, captions, and a custom image overlay. The project utilizes Python's Praw library to fetch data from Reddit, and the assemblyai library for speech-to-text transcription.
@@ -47,4 +46,3 @@ Contributions are welcome! If you find any issues or have any suggestions, pleas
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
