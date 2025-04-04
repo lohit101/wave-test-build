@@ -1,6 +1,6 @@
-# YTFaceless: A Django-based Reddit Video Facelift Project
+# WaveAI: A Django-based Reddit Video Facelift Project
 
-YTFaceless is a Django-based web application that takes user-submitted Reddit posts and generates a personalized video clip with a voiceover, captions, and a custom image overlay. The project utilizes Python's Praw library to fetch data from Reddit, and the assemblyai library for speech-to-text transcription.
+WaveAI is a Django-based web application that takes user-submitted Reddit posts and generates a personalized video clip with a voiceover, captions, and a custom image overlay. The project utilizes Python's Praw library to fetch data from Reddit, and the assemblyai library for speech-to-text transcription.
 
 ## Features
 
